@@ -118,5 +118,14 @@ def add_to_students(name, cohort, age, hobby)
 end
 
 #nothing happens until we call the methods
-try_load_students
-interactive_menu
+#try_load_students
+#interactive_menu
+
+def source_code
+    File.open($0, "r") do |file|
+        file.readlines.each do |line|
+            puts line
+        end
+    end
+end
+print source_code

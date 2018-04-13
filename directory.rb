@@ -1,8 +1,8 @@
+@students = []
+
 def input_students
-  puts "Please enter the names of the students,then their cohort,  age and a hobby"
+  puts "Please enter the names of the students, their cohort, age and a hobby"
   puts "To finish, just hit return twice"
-  # create an empty array
-  students = [ ]
   # get the first name
   name = gets.chomp
   # while the name is not empty, repeat this code
@@ -15,42 +15,63 @@ def input_students
     puts "hobbies?"
     hobby = gets.chomp
     # add the student hash to the array
-    students << {name: name, age: age, hobby: hobby, cohort: cohort} 
-    if students.count <= 1
-      puts "Now we have #{students.count} student"
+    @students << {name: name, age: age, hobby: hobby, cohort: cohort} 
+    if @students.count <= 1
+      puts "Now we have #{@students.count} student"
     else
-    puts "Now we have #{students.count} students"
-  end
+      puts "Now we have #{@students.count} students"
+    end
     #get another name from the user
-        name = gets.chomp
+    name = gets.chomp
   end
-  # return the array of students
-  students
 end
   
-# and then print them
+def interactive_menu
+  loop do
+  print_menu
+    process(gets.chomp)
+  end
+end
+
+def print_menu
+  puts "1. Input the Students"
+  puts "2. Show the Students"
+  puts "9. Exit" #9. because we will be adding more items
+end
+
+def show_students
+  print_header
+  print_students_list
+  print_footer
+end
+
+def process(selection)
+  case selection
+  when "1"
+    input_students
+  when "2"
+    show_students
+  when "9"
+    exit # this will cause the program to terminate
+  else 
+    puts "I don't know what you meant, try again"
+  end
+end
+
 def print_header
   puts "The students of Villians Academy"
   puts "------------"
 end
 
-def print(students)
-  count = -1
-  while true
-    count += 1
-      if students[count] == nil
-      break
-      else
-        puts "#{students[count][:name].center(12)} (#{students[count][:cohort]} cohort) #{students[count][:age]} years old and likes #{students[count][:hobby]}"
-      end
+def print_students_list
+  @students.each do |student|
+    puts "#{student[:name].center(12)} (#{student[:cohort]} cohort) #{student[:age]} years old and likes #{student[:hobby]}"
   end
 end
-def print_footer(names)
-  puts "Overall, we have #{names.count} great students"
-end
-students = input_students
 
+def print_footer
+  puts "Overall, we have #{@students.count} great students"
+end
+  
 #nothing happens until we call the methods
-print_header
-print(students)
-print_footer(students)
+interactive_menu

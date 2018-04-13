@@ -1,3 +1,4 @@
+require 'csv'
 @students = []
 
 def print_menu
@@ -36,9 +37,7 @@ end
 def input_students
   puts "Please enter the names of the students, their cohort, age and a hobby"
   puts "To finish, just hit return twice"
-  # get the first name
   name = STDIN.gets.chomp
-  # while the name is not empty, repeat this code
   while !name.empty? do
     puts "Cohort"
     cohort = STDIN.gets.chomp
@@ -48,15 +47,15 @@ def input_students
     puts "hobbies?"
     hobby = STDIN.gets.chomp
     # add the student hash to the array
-    @students << {name: name, age: age, hobby: hobby, cohort: cohort} 
+    add_to_students(name, cohort, age, hobby)
     if @students.count <= 1
       puts "Now we have #{@students.count} student"
     else
       puts "Now we have #{@students.count} students"
     end
-    #get another name from the user
     name = STDIN.gets.chomp
   end
+  puts "Students input sucessfully"
 end
   
 def show_students
@@ -82,39 +81,41 @@ def print_footer
 end
 
 def save_students
-  # open the file for writing
-  file = File.open("students.csv", "w")
-  # iterate over the array of students
-  @students.each do |student|
-    student_data = [student[:name], student[:cohort], student [:age], student[:hobby]]
-    csv_line = student_data.join(",")
-    file.puts csv_line
+  puts "which file would you like to save to?"
+    CSV.open(STDIN.gets.chomp, "w") do |file|
+    @students.each do |student|
+      file << [student[:name], student[:cohort], student [:age], student[:hobby]]
+     end
   end
-  file.close
+  puts "Students saved sucessfully"
 end
 
 def try_load_students
-  filename = ARGV.first #first argument from the command line
+  ARGV.first == nil ? filename = "students.csv" : filename = ARGV.first #first argument from the command line
   return if filename.nil? # get out of the method if it isn't given
   if File.exists?(filename) # if it exists
     load_students(filename)
     puts "Loaded #{@students.count} from #{filename}"
   else # if it doesn't exist
     puts "Sorry, #{filename} doesn't exist."
-    exit # quit the program
+    exit 
   end
+  puts "Students loaded sucessfully"
 end
 
 def load_students(filename = "students.csv")
-  file = File.open(filename, "r")
-  file.readlines.each do |line|
-  name, cohort, age, hobby = line.chomp.split(',')
-    @students << {name: name, cohort: cohort.to_sym, age: age, hobby: hobby}
-  end
-  file.close
+  puts "which file would you like to load from?"
+  filename = STDIN.gets.chomp
+  CSV.foreach(filename) do |row|
+      name, cohort, age, hobby = row
+      add_to_students(name, cohort.to_sym, age, hobby)
+    end
+  puts "Load successful!"
 end
 
-
+def add_to_students(name, cohort, age, hobby)
+  @students << {name: name, cohort: cohort.to_sym, age: age, hobby: hobby}
+end
 
 #nothing happens until we call the methods
 try_load_students
